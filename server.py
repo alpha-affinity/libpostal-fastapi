@@ -13,9 +13,9 @@ def parse(
     address: str,
     language: Annotated[str | None, Query(min_length=2, max_length=2)] = None,
     country: Annotated[str | None, Query(min_length=2, max_length=2)] = None,
-) -> dict[str, str]:
+) -> list[list[str]]:
     """Wrap https://github.com/openvenues/pypostal/blob/1.1/postal/parser.py."""
-    return {tup[1]: tup[0] for tup in parser.parse_address(**locals())}
+    return parser.parse_address(**locals())
 
 
 @app.get("/expand", response_class=ORJSONResponse)
@@ -89,7 +89,7 @@ def expandparse(
     delete_apostrophes: bool = True,
     expand_numex: bool = True,
     roman_numerals: bool = True,
-) -> list[dict[str, str]]:
+) -> list[list[list[str]]]:
     """Wrap expand, and parse all outputs."""
     return [
         parse(address=address, language=language, country=country)

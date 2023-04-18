@@ -30,7 +30,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends g++ && \
     pip install postal fastapi uvicorn[standard] orjson && \
     # smoketest
-    python -c "from postal.parser import parse_address; address = '123 Beech Lake Ct. Roswell, GA 30076'; print({tup[1]: tup[0] for tup in parse_address(address)})" && \
+    python -c "from postal.parser import parse_address; address = '123 Beech Lake Ct. Roswell, GA 30076'; print(parse_address(address))" && \
     # cleanup
     rm -fr /var/lib/apt/lists /var/lib/cache/* /var/log/* /tmp/*
 

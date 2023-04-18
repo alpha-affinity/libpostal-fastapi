@@ -4,7 +4,7 @@ Latest [libpostal](https://github.com/openvenues/libpostal) built from source, w
 
 ### Build
 
-The build uses optimized `cblas_dgemm` from [OpenBLAS](https://www.openblas.net/) with [OpenMP](https://www.openmp.org/) support to accellerate matrix multiplications in libpostal:
+The build uses optimized `cblas_dgemm` from [OpenBLAS](https://www.openblas.net/) with [OpenMP](https://www.openmp.org/) support to accelerate matrix multiplications in libpostal:
 ```
 docker build . -t libpostal-fastapi
 ```
@@ -13,7 +13,7 @@ docker build . -t libpostal-fastapi
 
 Start the server:
 ```
-docker run -it --rm -p 8001:8001 ghcr.io/ddelange/libpostal-fastapi:master
+docker run -it --rm -p 8001:8001 ghcr.io/alpha-affinity/libpostal-fastapi:master
 ```
 
 Send requests to the server (note that the same label might occur multiple times):

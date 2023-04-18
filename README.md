@@ -2,6 +2,13 @@
 
 Latest [libpostal](https://github.com/openvenues/libpostal) built from source, wrapped in a [FastAPI](https://github.com/tiangolo/fastapi) microservice.
 
+### Build
+
+The build uses optimized `cblas_dgemm` from [OpenBLAS](https://www.openblas.net/) with [OpenMP](https://www.openmp.org/) support to accellerate matrix multiplications in libpostal:
+```
+docker build . -t libpostal-fastapi
+```
+
 ### Usage
 
 Start the server:

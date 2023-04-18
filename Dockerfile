@@ -2,12 +2,12 @@ FROM python:3-slim as builder
 
 # install build dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl autoconf automake libtool pkg-config build-essential git libatlas-base-dev && \
+    apt-get install -y --no-install-recommends curl autoconf automake libtool pkg-config build-essential git libopenblas-openmp-dev && \
     # cleanup
     rm -fr /var/lib/apt/lists /var/lib/cache/* /var/log/* /tmp/*
 
-# build libpostal
-RUN git clone --depth=1 https://github.com/openvenues/libpostal /code/libpostal
+# build libpostal with OpenBLAS support ref https://github.com/openvenues/libpostal/pull/625
+RUN git clone --depth=1 https://github.com/ddelange/libpostal -b patch-1 /code/libpostal
 WORKDIR /code/libpostal
 RUN ./bootstrap.sh && \
     ./configure --datadir=/usr/share/libpostal && \

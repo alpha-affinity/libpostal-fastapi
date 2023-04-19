@@ -9,25 +9,25 @@ WORKDIR /code/libpostal
 RUN ./bootstrap.sh && \
     ./configure --datadir=/usr/share/libpostal && \
     make -j4 && \
-    DESTDIR=/libpostal make install && \
-    ldconfig
+    make install && \
+    ldconfig && \
+    pkg-config --cflags libpostal
 
 # create venv
 RUN python3.11 -m venv ${VIRTUAL_ENV} && \
     pip install -U pip setuptools wheel
 
-# install server dependencies
+# install and record server dependencies
 RUN pip install postal fastapi uvicorn[standard] orjson
-
 RUN find-libdeps ${VIRTUAL_ENV} > ${VIRTUAL_ENV}/pkgdeps.txt
 
-
+# final stage
 FROM ghcr.io/alpha-affinity/snakepacker/runtime:3.11-master
 
+# copy libpostal and install venv
 COPY --from=builder /usr/share/libpostal /usr/share/libpostal
-COPY --from=builder /libpostal /
+COPY --from=builder /usr/local/lib/libpostal.la /usr/local/lib/libpostal.a /usr/local/lib/libpostal.so.1 /usr/lib/
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-
 RUN xargs -ra ${VIRTUAL_ENV}/pkgdeps.txt apt-install
 
 # smoketest

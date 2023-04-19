@@ -37,4 +37,4 @@ RUN python -c "from postal.parser import parse_address; address = '123 Beech Lak
 WORKDIR /code
 COPY server.py .
 EXPOSE 8001/tcp
-CMD ["uvicorn", "server:app", "--port", "8001"]
+CMD ["uvicorn", "server:app", "--port", "8001", "--host", "0.0.0.0"]

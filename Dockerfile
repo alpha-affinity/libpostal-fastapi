@@ -1,13 +1,10 @@
-FROM python:3-slim as builder
+FROM ghcr.io/alpha-affinity/snakepacker/buildtime:master as builder
 
 # install build dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl autoconf automake libtool pkg-config build-essential git libopenblas-openmp-dev && \
-    # cleanup
-    rm -fr /var/lib/apt/lists /var/lib/cache/* /var/log/* /tmp/*
+RUN apt-install curl automake libtool libopenblas-openmp-dev
 
-# build libpostal with OpenBLAS support ref https://github.com/openvenues/libpostal/pull/625
-RUN git clone --depth=1 https://github.com/ddelange/libpostal -b patch-1 /code/libpostal
+# build libpostal
+RUN git clone --depth=1 https://github.com/openvenues/libpostal /code/libpostal
 WORKDIR /code/libpostal
 RUN ./bootstrap.sh && \
     ./configure --datadir=/usr/share/libpostal && \
@@ -15,24 +12,26 @@ RUN ./bootstrap.sh && \
     DESTDIR=/libpostal make install && \
     ldconfig
 
+# create venv
+RUN python3.11 -m venv ${VIRTUAL_ENV} && \
+    pip install -U pip setuptools wheel
 
-FROM python:3-slim
+# install server dependencies
+RUN pip install postal fastapi uvicorn[standard] orjson
 
-ENV TZ="Etc/UTC" \
-    DEBIAN_FRONTEND="noninteractive" \
-    PIP_NO_CACHE_DIR=1
+RUN find-libdeps ${VIRTUAL_ENV} > ${VIRTUAL_ENV}/pkgdeps.txt
+
+
+FROM ghcr.io/alpha-affinity/snakepacker/runtime:3.11-master
 
 COPY --from=builder /usr/share/libpostal /usr/share/libpostal
 COPY --from=builder /libpostal /
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-# install server dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends g++ && \
-    pip install postal fastapi uvicorn[standard] orjson && \
-    # smoketest
-    python -c "from postal.parser import parse_address; address = '123 Beech Lake Ct. Roswell, GA 30076'; print(parse_address(address))" && \
-    # cleanup
-    rm -fr /var/lib/apt/lists /var/lib/cache/* /var/log/* /tmp/*
+RUN xargs -ra ${VIRTUAL_ENV}/pkgdeps.txt apt-install
+
+# smoketest
+RUN python -c "from postal.parser import parse_address; address = '123 Beech Lake Ct. Roswell, GA 30076'; print(parse_address(address))"
 
 # set server entrypoint
 WORKDIR /code

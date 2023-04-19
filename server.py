@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import FastAPI, Query
 from fastapi.responses import ORJSONResponse
 from postal import expand as expand_
-from postal import parser
+from postal.parser import parse_address
 
 app = FastAPI()
 
@@ -15,7 +15,7 @@ def parse(
     country: Annotated[str | None, Query(min_length=2, max_length=2)] = None,
 ) -> list[list[str]]:
     """Wrap https://github.com/openvenues/pypostal/blob/1.1/postal/parser.py."""
-    return parser.parse_address(**locals())
+    return parse_address(**locals())
 
 
 @app.get("/expand", response_class=ORJSONResponse)

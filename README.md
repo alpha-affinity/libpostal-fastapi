@@ -26,4 +26,4 @@ $ curl http://localhost:8001/expandparse?address=30+w+26th+st,+new+york,+ny&coun
 [[["30","house_number"],["w 26th st","road"],["new york","city"],["ny","state"]],...]
 ```
 
-View all possible query parameters at `http://localhost:8001/docs`.
+View all possible query parameters at [`http://localhost:8001/docs`](http://localhost:8001/docs) per the type hints in [`server.py`](server.py).

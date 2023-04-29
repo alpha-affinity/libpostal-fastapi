@@ -1,0 +1,4 @@
+postal
+fastapi
+uvicorn[standard]
+orjson

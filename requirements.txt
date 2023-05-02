@@ -1,0 +1,5 @@
+# compatible release clauses https://www.python.org/dev/peps/pep-0440/#compatible-release
+postal~=1.1
+fastapi~=0.95
+uvicorn[standard]~=0.22
+orjson~=3.8

@@ -3,7 +3,7 @@ FROM ghcr.io/alpha-affinity/snakepacker/buildtime:master as builder
 # install build dependencies
 RUN apt-install curl automake libtool libopenblas-openmp-dev
 
-# build libpostal
+# build libpostal from latest source
 RUN git clone --depth=1 https://github.com/openvenues/libpostal /code/libpostal
 WORKDIR /code/libpostal
 RUN ./bootstrap.sh && \
@@ -17,8 +17,9 @@ RUN ./bootstrap.sh && \
 RUN python3.11 -m venv ${VIRTUAL_ENV} && \
     pip install -U pip setuptools wheel
 
-# install and record server dependencies
-RUN pip install postal fastapi uvicorn[standard] orjson
+# install and record server dependencies (copy runtime source code only in final stage)
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 RUN find-libdeps ${VIRTUAL_ENV} > ${VIRTUAL_ENV}/pkgdeps.txt
 
 # final stage

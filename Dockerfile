@@ -27,7 +27,7 @@ FROM ghcr.io/alpha-affinity/snakepacker/runtime:3.11-master
 
 # copy libpostal and install venv
 COPY --from=builder /usr/share/libpostal /usr/share/libpostal
-COPY --from=builder /usr/local/lib/libpostal.la /usr/local/lib/libpostal.a /usr/local/lib/libpostal.so.1 /usr/lib/
+COPY --from=builder /usr/local/lib/libpostal.so.1 /usr/lib/
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 RUN xargs -ra ${VIRTUAL_ENV}/pkgdeps.txt apt-install
 

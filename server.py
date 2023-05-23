@@ -5,10 +5,10 @@ from fastapi.responses import ORJSONResponse
 from postal import expand as expand_
 from postal.parser import parse_address
 
-app = FastAPI()
+app = FastAPI(default_response_class=ORJSONResponse)
 
 
-@app.get("/parse", response_class=ORJSONResponse)
+@app.get("/parse")
 def parse(
     address: str,
     language: Annotated[str | None, Query(min_length=2, max_length=2)] = None,
@@ -18,7 +18,7 @@ def parse(
     return parse_address(**locals())
 
 
-@app.get("/expand", response_class=ORJSONResponse)
+@app.get("/expand")
 def expand(
     address: str,
     languages: Annotated[list[str] | None, Query(min_length=2, max_length=2)] = None,
@@ -56,7 +56,7 @@ def expand(
     return expand_.expand_address(**locals())
 
 
-@app.get("/expandparse", response_class=ORJSONResponse)
+@app.get("/expandparse")
 def expandparse(
     address: str,
     language: Annotated[str | None, Query(min_length=2, max_length=2)] = None,

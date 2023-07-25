@@ -1,4 +1,5 @@
 FROM ghcr.io/alpha-affinity/snakepacker/buildtime:master as builder
+ARG TARGETARCH
 
 # install build dependencies
 RUN apt-install curl automake libtool libopenblas-openmp-dev
@@ -7,7 +8,8 @@ RUN apt-install curl automake libtool libopenblas-openmp-dev
 RUN git clone --depth=1 https://github.com/openvenues/libpostal /code/libpostal
 WORKDIR /code/libpostal
 RUN ./bootstrap.sh && \
-    ./configure --datadir=/usr/share/libpostal && \
+    # https://github.com/openvenues/libpostal/pull/632#issuecomment-1648303654
+    ([ "$TARGETARCH" == "arm64" ] && ./configure --datadir=/usr/share/libpostal --disable-sse2 || ./configure --datadir=/usr/share/libpostal) && \
     make -j4 && \
     make install && \
     ldconfig && \

@@ -92,7 +92,7 @@ def expandparse(
 ) -> list[list[list[str]]]:
     """Wrap expand, and parse all outputs."""
     kwargs = locals().copy()
-    kwargs["languages"] = language and [kwargs.pop("language")
+    kwargs["languages"] = language and [kwargs.pop("language")]
     return [
         parse(address=address, language=language, country=country)
         for address in expand(**kwargs)

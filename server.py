@@ -91,28 +91,9 @@ def expandparse(
     roman_numerals: bool = True,
 ) -> list[list[list[str]]]:
     """Wrap expand, and parse all outputs."""
+    kwargs = locals().copy()
+    kwargs["languages"] = language and [kwargs.pop("language")]
     return [
         parse(address=address, language=language, country=country)
-        for address in expand(
-            address=address,
-            languages=language and [language],
-            address_components=address_components,
-            latin_ascii=latin_ascii,
-            transliterate=transliterate,
-            strip_accents=strip_accents,
-            decompose=decompose,
-            lowercase=lowercase,
-            trim_string=trim_string,
-            replace_word_hyphens=replace_word_hyphens,
-            delete_word_hyphens=delete_word_hyphens,
-            replace_numeric_hyphens=replace_numeric_hyphens,
-            delete_numeric_hyphens=delete_numeric_hyphens,
-            split_alpha_from_numeric=split_alpha_from_numeric,
-            delete_final_periods=delete_final_periods,
-            delete_acronym_periods=delete_acronym_periods,
-            drop_english_possessives=drop_english_possessives,
-            delete_apostrophes=delete_apostrophes,
-            expand_numex=expand_numex,
-            roman_numerals=roman_numerals,
-        )
+        for address in expand(**kwargs)
     ]

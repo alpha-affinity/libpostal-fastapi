@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import ORJSONResponse
 from postal import expand as expand_
 from postal.parser import parse_address
@@ -15,6 +15,9 @@ def parse(
     country: Annotated[str | None, Query(min_length=2, max_length=2)] = None,
 ) -> list[list[str]]:
     """Wrap https://github.com/openvenues/pypostal/blob/1.1/postal/parser.py."""
+    if country is not None and language is None:
+        detail = "Specifying country without specifying language is disallowed"
+        raise HTTPException(status_code=400, detail=detail)
     return parse_address(**locals())
 
 

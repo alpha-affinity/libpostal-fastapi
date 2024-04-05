@@ -16,7 +16,7 @@ RUN ./bootstrap.sh && \
     pkg-config --cflags libpostal
 
 # create venv
-RUN python3.11 -m venv ${VIRTUAL_ENV} && \
+RUN python3.12 -m venv ${VIRTUAL_ENV} && \
     pip install -U pip setuptools wheel
 
 # install and record server dependencies (copy runtime source code only in final stage)
@@ -25,7 +25,7 @@ RUN pip install -r requirements.txt
 RUN find-libdeps ${VIRTUAL_ENV} > ${VIRTUAL_ENV}/pkgdeps.txt
 
 # final stage
-FROM ghcr.io/alpha-affinity/snakepacker/runtime:3.11-master
+FROM ghcr.io/alpha-affinity/snakepacker/runtime:3.12-master
 
 # copy libpostal and install venv
 COPY --from=builder /usr/share/libpostal /usr/share/libpostal
